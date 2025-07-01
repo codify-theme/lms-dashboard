@@ -3,14 +3,22 @@
 import { useTheme } from 'next-themes';
 import { Toaster as Sonner } from 'sonner';
 
+type ThemeType = 'light' | 'dark' | 'system';
+
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
+  const { theme } = useTheme();
+
+  // Type guard to ensure theme is one of allowed values
+  const isValidTheme = (value: unknown): value is ThemeType =>
+    value === 'light' || value === 'dark' || value === 'system';
+
+  const safeTheme: ThemeType = isValidTheme(theme) ? theme : 'system';
 
   return (
     <Sonner
-      theme={theme as ToasterProps['theme']}
+      theme={safeTheme}
       className="toaster group"
       toastOptions={{
         classNames: {
